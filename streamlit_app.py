@@ -1,456 +1,174 @@
+import streamlit as st
 #Instalando Pacotes
 import numpy as np
 import pandas as pd
-import streamlit as st
 import yfinance as yf
-import plotly.graph_objects as go
 import pandas_ta as ta
 from PIL import Image
+from Backtest import Main_1,Main_2,Main_3,Main_4,Main_5,Main_6
+import requests
+import streamlit_authenticator as stauth
 
 #===========================================PROGRAMA AQUI=================================================
 #Carregando Logomarca
-image = Image.open("TRADE.png")
 #Abrindo logomarca no Streamlit
-st.image(image,width=200)
+#st.image(image,width=200)
 #Iniciando APP
-st.title("APP GRÁFICO TRADEOBJETIVO")
-#Indicadores disponíveis
-indicadores = ['IFR2','MEDIA3-MAX&MIN','TUTLE 20/10','SETUP 9.1','STOP ATR']
-#Indicador para o usuário selecionar
-Indicador = st.sidebar.selectbox('Escolha o indicador desejado :',indicadores)
-#Digitar o ativo desejado
-ativo = st.sidebar.text_input("Digite o ativo desejado : ")
-if ativo:
-    #Carregando Data Frame
-    df = yf.download(ativo, period='60d')
-    #Setup IFR2
-    if Indicador == indicadores[0]:
-        df['IFR2'] = ta.rsi(df['Close'],length=2)
-        df['Highest'] = df['High'].rolling(2).max()
-        df['Highest'] = df['Highest'].shift(1)
-        df['Buy'] = np.where(df["IFR2"] < 25.00, df['Close'], np.nan)
-        df['Sell'] = np.where(df['High'] > df['Highest'],df['Highest'] ,np.nan)
-        df['parametro'] = 25.00
-        #gráfico candlestick
-        trace1 = {
-            'x': df.index,
-            'open': df['Open'],
-            'close': df['Close'],
-            'high': df['High'],
-            'low': df['Low'],
-            'type': 'candlestick',
-            'name': f'{ativo}',
-            'showlegend': False
-        }
-        #Máxima dos 2 últimos dias
-        trace2 = {
-            'x': df.index,
-            'y':  df['Highest'],
-            'type': 'scatter',
-            'mode': 'lines',
-            'line': {
-                'width':1,
-                'color': 'black'
-            },
-            'name': 'Highest2'
-        }
-        #Sinal de Compra
-        trace3 = {
-            'x': df.index,
-            'y': df['Buy'],
-            'type': 'scatter',
-            'mode': 'markers + text',
-            'text': "↑",
-            'line': {
-                'width':1,
-                'color': 'black'
 
-            },
-            'name': 'Buy'
-        }
-        #Sinal de Venda
-        trace4 = {
-            'x': df.index,
-            'y': df['Sell'],
-            'type': 'scatter',
-            'mode': 'markers + text',
-            'text':"↓",
-            'line': {
-                'width': 1,
-                'color': 'blue'
-            },
-            'name': 'Sell'
-        }
-        #informar todos os dados e gráficos em uma lista
-        data = [trace1, trace2, trace3, trace4]
-        #configurar o layout do gráfico
-        layout = go.Layout({
-            'title': {
-                'text': f'Gráfico IFR2 {ativo}',
-                'font': {
-                    'size': 20
-                }
-            }
-        })
-        #instanciar objeto Figure e plotar o gráfico
-        fig = go.Figure(data=data, layout=layout)
-        st.plotly_chart(fig, width=800, height=800)
-        #Indicador IFR2
-        trace5 = {
-            'x': df.index,
-            'y': df['IFR2'],
-            'type': 'scatter',
-            'mode': 'lines',
-            'line': {
-                'width': 1,
-                'color': 'blue'
-            },
-            'name': 'IFR2'
-        }
+st.title("APP BACKTEST TRADE")
+#Função para Carregar Ativos do SP&500
+def Ativos_SP500():
+    tickers = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')[0]
+    ativos = tickers['Symbol'].to_list()
+    acoes = []
+    for ativo in ativos:
+        ativo = ativo.replace(".","-")
+        acoes.append(ativo)
+    return acoes
+#Função para Carregar Ativos do SP&500
+def Ativos_B3():
+    tickers = pd.read_excel(r"C:\Users\Lucas\Documents\DADOS.xlsx")
+    ativos = tickers['Código'].to_list()
+    acoes = []
+    for ativo in ativos:
+        ativo = ativo + ".SA"
+        acoes.append(ativo)
+    return acoes
+def Resultado(dados):
+    DataFrame = st.dataframe(dados)
+    dados = dados.to_csv()
+    Mensagem = st.write("Clique no Botão abaixo e faça o Download do arquivo")
+    Botao = st.download_button( label="Resultado do Backtest",file_name='Resultado.csv', data = dados)
+    return DataFrame,Mensagem,Botao
 
-        trace6 = {
-            'x': df.index,
-            'y':df['parametro'],
-            'type': 'scatter',
-            'mode': 'lines',
-            'line': {
-                'width': 1,
-                'color': 'red'
-            },
-            'name': 'Nível sobrecomprado'
-        }
-        data_1 = [trace5,trace6]
-        #configurar o layout do gráfico
-        layout_1 = go.Layout({
-        'title': {
-            'text': f'Indicador IFR2 {ativo}',
-            'font': {
-                'size': 20
-                }
-            }
-        })
-
-        fig_1 = go.Figure(data=data_1, layout=layout_1)
-        st.plotly_chart(fig_1,width=600, height=600)
-
-    #Média das 3 máximas e mínimas
-    elif Indicador == indicadores[1]:
-        df['Avg_Low3'] = df['Low'].rolling(3).mean()
-        df['Avg_Low3'] = df['Avg_Low3'].shift(1)
-        df['Avg_High3'] = df['High'].rolling(3).mean()
-        df['Avg_High3'] = df['Avg_High3'].shift(1)
-        df['Buy'] = np.where(df["Close"] < df["Avg_Low3"] , df['Close'] ,np.nan)
-        df['Sell'] = np.where(df["Close"] > df["Avg_High3"], df["Close"] ,np.nan)
-        # gráfico candlestick
-        trace1 = {
-            'x': df.index,
-            'open': df['Open'],
-            'close': df['Close'],
-            'high': df['High'],
-            'low': df['Low'],
-            'type': 'candlestick',
-            'name': f'{ativo}',
-            'showlegend': False
-            }
-        #Mínima dos 3 ultimos dias
-        trace2 = {
-            'x': df.index,
-            'y': df['Avg_Low3'] ,
-            'type': 'scatter',
-            'mode': 'lines',
-            'line': {
-                'width': 1,
-                'color': 'blue'
-            },
-            'name': 'Média (3 Min)'
-        }
-        #Máxima dos 3 últimos dias
-        trace3 = {
-            'x': df.index,
-            'y': df['Avg_High3'],
-            'type': 'scatter',
-            'mode': 'lines',
-            'line': {
-                'width': 1,
-                'color': 'black'
-            },
-            'name': 'Média (3 Max)'
-        }
-        #Sinal de Compra
-        trace4 = {
-            'x': df.index,
-            'y': df['Buy'],
-            'type': 'scatter',
-            'mode':  'markers + text',
-            'text': '↑',
-            'line': {
-                'width': 2,
-                'color': 'black'
-            },
-            'name': 'Buy'
-        }
-        #Sinal de Venda
-        trace5 = {
-            'x': df.index,
-            'y': df['Sell'],
-            'type': 'scatter',
-            'mode':  'markers + text',
-            'text':'↓',
-            'line': {
-                'width': 1,
-                'color':'blue'
-            },
-            'name': 'Sell'
-        }
-        #informar todos os dados e gráficos em uma lista
-        data = [trace1,trace2,trace3,trace4,trace5]
-        # configurar o layout do gráfico
-        layout = go.Layout({
-        'title': {
-            'text': f'Gráfico 3 Máx/mín {ativo}',
-            'font': {
-            'size': 20
-                }
-            }
-        })
-        #instanciar objeto Figure e plotar o gráfico
-        fig = go.Figure(data=data, layout=layout)
-        st.plotly_chart (fig,width = 300,height=300)
-    #Setup Tutle 20-10
-    elif Indicador == indicadores[2]:
-            df['Highest 20'] = df['High'].rolling(20).max()
-            df['Highest 20'] = df['Highest 20'].shift(1)
-            df['Lowest 10'] = df['Low'].rolling(10).min()
-            df['Lowest 10'] = df['Lowest 10'].shift(1)
-            df['Buy'] = np.where(df["Close"] > df["Highest 20"], df['Close'], np.nan)
-            df['Sell'] = np.where(df["Close"] < df["Lowest 10"], df["Close"], np.nan)
-
-            #Gráfico candlestick
-            trace1 = {
-                'x': df.index,
-                'open': df['Open'],
-                'close': df['Close'],
-                'high': df['High'],
-                'low': df['Low'],
-                'type': 'candlestick',
-                'name': f'{ativo}',
-                'showlegend': False
-            }
-            #Mínima dos 10 últimos dias
-            trace2 = {
-                'x': df.index,
-                'y': df['Lowest 10'],
-                'type': 'scatter',
-                'mode': 'lines',
-                'line': {
-                    'width': 1,
-                    'color': 'blue'
-                },
-                'name': 'Lowest 10'
-            }
-            #Máxima dos 20 últimos dias
-            trace3 = {
-                'x': df.index,
-                'y': df['Highest 20'],
-                'type': 'scatter',
-                'mode': 'lines',
-                'line': {
-                    'width': 1,
-                    'color': 'black'
-                },
-                'name': 'Highest 20'
-            }
-            #Sinal de Compra
-            trace4 = {
-                'x': df.index,
-                'y': df['Buy'],
-                'type': 'scatter',
-                'mode': 'markers + text',
-                'text':"↑",
-                'line': {
-                    'width': 2,
-                    'color': 'blue'
-                },
-                'name': 'Buy'
-            }
-            #Sinal de Venda
-            trace5 = {
-                'x': df.index,
-                'y': df['Sell'],
-                'type': 'scatter',
-                'mode': 'markers + text',
-                'text':"↓",
-                'line': {
-                    'width': 2,
-                    'color': 'black'
-                },
-                'name': 'Sell'
-            }
-            # informar todos os dados e gráficos em uma lista
-            data = [trace1, trace2, trace3, trace4, trace5]
-            # configurar o layout do gráfico
-            layout = go.Layout({
-                'title': {
-                    'text': f'Gráfico Tutle 20/10 {ativo}',
-                    'font': {
-                        'size': 20
-                    }
-                }
-            })
-            # instanciar objeto Figure e plotar o gráfico
-            fig = go.Figure(data=data, layout=layout)
-            st.plotly_chart(fig, width=300, height=300)
-    elif Indicador == indicadores[3]:
-            #Média de 9.1
-            df['avg_exp 9'] = df['Close'].ewm(span=9, min_periods=9).mean()
-            df['avg_exp 9'] = df['avg_exp 9'].shift(1)
-            df['Buy'] = np.where(df["Close"] > df["avg_exp 9"], df['Close'], np.nan)
-            df['Sell'] = np.where(df["Close"] < df["avg_exp 9"], df["Close"], np.nan)
-            #Gráfico candlestick
-            trace1 = {
-                'x': df.index,
-                'open': df['Open'],
-                'close': df['Close'],
-                'high': df['High'],
-                'low': df['Low'],
-                'type': 'candlestick',
-                'name': f'{ativo}',
-                'showlegend': False
-            }
-            # média exponecial dos últimos 9 dias
-            trace2 = {
-                'x': df.index,
-                'y': df['avg_exp 9'],
-                'type': 'scatter',
-                'mode': 'lines',
-                'line': {
-                    'width': 1,
-                    'color': 'blue'
-                },
-                'name': 'media exp 9'
-            }
-            #Sinal de Compra
-            trace3 = {
-                'x': df.index,
-                'y': df['Buy'],
-                'type': 'scatter',
-                'mode': 'markers + text',
-                'text':"↑",
-                'line': {
-                    'width': 2,
-                    'color': 'black'
-                },
-                'name': 'Buy'
-            }
-            #Sinal de Venda
-            trace4 = {
-                'x': df.index,
-                'y': df['Sell'],
-                'type': 'scatter',
-                'mode': 'markers + text',
-                'text':"↓",
-                'line': {
-                    'width': 2,
-                    'color': 'blue'
-                },
-                'name': 'Sell'
-            }
-            # informar todos os dados e gráficos em uma lista
-            data = [trace1, trace2, trace3, trace4]
-            # configurar o layout do gráfico
-            layout = go.Layout({
-                'title': {
-                    'text':f'Gráfico 9.1 {ativo}',
-                    'font': {
-                        'size': 20
-                    }
-                }
-            })
-            # instanciar objeto Figure e plotar o gráfico
-            fig = go.Figure(data=data, layout=layout)
-            st.plotly_chart(fig, width=300, height=300)
-    #Stop Atr
+st.text("I-Este App realiza backtest em ações do indice Bovespa,Brasil Amplo e SP&500")
+st.text("II-O Dados são obtidos pela API do yahoo finance;")
+st.text("III-Todos as operações são do tipo Swing Trade com parametros abertos;")
+st.text("IV- Os backtest são realizados para um periodo dos últimos cinco anos")
+names = ['Lucas Campos','Leandro Giron']
+passwords = ['lucassomatoria7@gmail.com','leandro.giron@gmail.com']
+usuario = st.text_input("Insira seu nome de usuário : ")
+senha = st.text_input("Insira sua senha : ")
+if senha:
+    if usuario in names and senha in passwords:
+        st.text("Seja bem Vindo ao App Backtest Trade!")
     else:
-            df['high - low'] = df['High'] - df['Low']
-            df['Close_1'] = df['Close'].shift()
-            df['High - Close_1'] = abs(df['High'] - df['Close_1'])
-            df['Low - Close_1'] = abs(df['Low'] - df['Close_1'])
-            df['true range'] = df[['high - low', 'High - Close_1', 'Low - Close_1']].max(axis=1)
-            df['ATR'] = df['true range'].rolling(10).mean()
-            df['ATR_1'] = df['ATR'].shift()
-            df['STOP ATR'] = df['Close_1'] - 2 * df['ATR_1']
-            i = len(df)
-            Stop_Atr_2 = df['STOP ATR'].iloc[i-2]
-            Stop_Atr_1 = df['STOP ATR'].iloc[i-1]
-            #Fechamento anterior
-            fechamento_anterior = df['Close'].iloc[i-1]
-            # ALOCANDO VALOR DE FECHAMENTO ATUAL
-            fechamento_atual = df['Close'].iloc[-1]
+        st.write("Digite o login Novamente!")
 
-            df['Buy'] = np.where((fechamento_anterior < Stop_Atr_2) and (Stop_Atr_1 < fechamento_atual),df['Close'],np.nan)
-            df['Sell'] = np.where((Stop_Atr_2 < fechamento_anterior) and (fechamento_atual < Stop_Atr_1),df["Close"],np.nan)
+    ACOES = [" ","AÇÕES B3","AÇÕES SP&500"]
+    INDICE = st.sidebar.selectbox("Escolha a classe de ações desejada :",ACOES)
+    if INDICE =='AÇÕES SP&500':
+        acoes = Ativos_SP500()
+    else:
+        acoes = Ativos_B3()
+    ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR']
+    SETUP = st.sidebar.selectbox('Escolha a estratégia desejado :',ESTRATEGIA)
+    #Indicadores disponíveis
+    if SETUP:
+        if SETUP == ESTRATEGIA[1]:
+            st.header("O Setup Bandas de Bollinger possui as seguintes regras;")
+            st.text("I) Se fechamento do dia e menor do que a banda inferior compra-se o fechamento do dia")
+            st.text("II) Se o fechamento do dia for superior a banda inferior vende-se o fechamento do dia")
+            st.text("III) Caso queira pode-se incluir stop no tempo")
+            st.text("IV-O cálculo das Bandas de Bollinger e dado pela seguinte fórmula :")
+            st.text("Cálculo da Banda Superior com desvio padrão sigma para n periodos")
+            st.latex(r'''BandaSuperior = \frac{\sum_{1}^{n}Close_{i}}{n} + n\sigma''')
+            st.text("Cálculo da Banda Inferior com desvio padrão sigma para n periodos")
+            st.latex(r'''BandaInferior = \frac{\sum_{1}^{n}Close_{i}}{n} - n\sigma''')
+            stop = st.slider("Escolha o valor do stop no tempo.Caso não deseje deixe o valor zero")
+            desvio = st.slider("Esolha o valor do desvio")
+            periodo = st.slider("Digite o valor do periodo")
+            if (periodo != 0):
+                st.write("Robo Trabalhando!")
+                dados = Main_1(stop,desvio,periodo,acoes)
+                Resultado(dados)
+                
+        elif SETUP == ESTRATEGIA[2]:
+            st.header("O Setup TikTtok possui as seguintes regras;")
+            st.text("I) Se o preço tocar na média das ultimas 2 mínimas compra-se neste valor")
+            st.text("II) Se o preço tocar a média das ultimas três máximas vende-se neste preço")
+            st.text("III) Caso queira pode-se incluir stop no tempo")
+            st.text("O cálculo da média móvel aritmética é dado por ;")
+            st.latex(r'''\frac{\sum_{1}^{n}Close_{i}}{n}''')
+            stop = st.slider("Digite o stop no tempo.Caso não deseje digite o valor zero")
+            if (stop!=0)or(stop==0):
+                st.write("Robo Trabalhando!")
+                dados = Main_2(stop,acoes)
+                Resultado(dados)
 
-            # gráfico candlestick
-            trace1 = {
-                'x': df.index,
-                'open': df['Open'],
-                'close': df['Close'],
-                'high': df['High'],
-                'low': df['Low'],
-                'type': 'candlestick',
-                'name': f'{ativo}',
-                'showlegend': False
-            }
-            # Máxima dos 2 últimos dias
-            trace2 = {
-                'x': df.index,
-                'y': df['STOP ATR'],
-                'type': 'scatter',
-                'mode': 'lines',
-                'line': {
-                    'width': 2,
-                    'color': 'blue'
-                },
-                'name': 'STOP ATR'
-            }
-            # Sinal de Compra
-            trace3 = {
-                'x': df.index,
-                'y': df['Buy'],
-                'type': 'scatter',
-                'mode': 'markers + text',
-                'text': "↑",
-                'line': {
-                    'width': 2,
-                    'color': 'black'
+        elif SETUP==ESTRATEGIA[3]:
+            st.header("O Setup do IFR2 possui as seguintes regras;")
+            st.text("I) Se o valor do IFR de periodos for menor do que 25 compra-se o fechamento do dia")
+            st.text("II)Alvo encontra-se na máxima dos dois ultimos dias")
+            st.text("III)Caso queira pode-se incluir stop no tempo")
+            st.text("A formula do IFR é dada por:")
+            st.latex(r'''
+            RSI = \frac{100}{1+\frac{U}{D}}
+            ''')
+            st.text("U = média das cotações dos últimos N dias em que a cotação subiu")
+            st.text("D = média das cotações dos últimos N dias em que a cotação desceu")
+            stop = st.slider("Digite o stop no tempo.Caso não deseje digite o valor zero")
+            #Condição de executação para entradas do usuário
+            if (stop!=0)or(stop==0):
+                st.write("Robo Trabalhando!")
+                dados = Main_3(stop,acoes)
+                Resultado(dados)
 
-                },
-                'name': 'Buy'
-            }
-            # Sinal de Venda
-            trace4 = {
-                'x': df.index,
-                'y': df['Sell'],
-                'type': 'scatter',
-                'mode': 'markers + text',
-                'text':"↓",
-                'line': {
-                    'width': 4,
-                    'color': 'blue'
-                },
-                'name': 'Sell'
-            }
-            # informar todos os dados e gráficos em uma lista
-            data = [trace1, trace2, trace3, trace4]
-            # configurar o layout do gráfico
-            layout = go.Layout({
-                'title': {
-                    'text': f'Gráfico STOP ATR {ativo}',
-                    'font': {
-                        'size': 20
-                    }
-                }
-            })
-            # instanciar objeto Figure e plotar o gráfico
-            fig = go.Figure(data=data, layout=layout)
-            st.plotly_chart(fig, width=600, height=600)
+        elif SETUP == ESTRATEGIA[4]:
+            st.header("O Setup 3 Máximas 3 Mínimas possui as seguintes regras;")
+            st.text("I- Se o fechamento do dia for menor do que a média das três minimas compra-se o fechamento do dia")
+            st.text("II - Se o fechamento do dia for maior do que a média das três máximas vende-se o fechamento do dia")
+            st.text("III - Caso queira pode-se incluir stop no tempo")
+            st.text("O cálculo da média móvel aritmética é dado por ;")
+            st.latex(r'''\frac{\sum_{1}^{n}High_{i}}{n}''')
+            stop = st.slider("Digite o stop no tempo.Caso não deseje digite o valor zero")
+            if (stop!=0)or(stop==0):
+                st.write("Robo Trabalhando!")
+                dados = Main_4(stop,acoes)
+                Resultado(dados)
+
+        elif SETUP == ESTRATEGIA[5]:
+            st.header("O Setup Tutle 20-10 possui as seguintes regras;")
+            st.text("I)Se o fechamento do dia for maior do que as 20 máximas compra-se o fechamento do dia")
+            st.text("II)Se o fechamento do dia for menor do que as 10 mínimas vende-se o fechamento do dia")
+            st.text("III)Caso queira pode-se incluir stop no tempo")
+            stop = st.slider("Digite o stop no tempo.Caso não deseje digite o valor zero")
+            st.text("O cálculo da maior máxima é dado por;")
+            st.latex(r'''Max\left \{ Hight_{1},Hight_{2},...,Hight_{n}\right \}''')
+            st.text("O cálculo da menor mínima é dado por;")
+            st.latex(r'''Min\left \{ Low_{1},Low_{2},...,Low_{n}\right \}''')
+            if (stop!=0)or(stop==0):
+                st.write("Robo Trabalhando!")
+                dados = Main_5(stop,acoes)
+                Resultado(dados)
+
+        elif SETUP == ESTRATEGIA[6]:
+            st.header("O Setup 9.1 possui as seguintes regras;")
+            st.text("I-Se o fechamento do dia for menor do que a média exponencial de 9 compra-se o fechamento do dia")
+            st.text("II-Se o fechamento do dia for maior do que a média exponencial de 9  vende-se o fechamento do dia")
+            st.text("III-Caso queira pode-se incluir stop no tempo")
+            st.text("O cálculo da média móvel exponencial é dado por ;")
+            st.latex(r'''MME = \left [ Close_{n}-MME_{n-1} \right ]*MME_{n-1}''')
+            stop = st.slider("Digite o stop no tempo.Caso não deseje digite o valor zero")
+            if (stop!=0)or(stop==0):
+                st.write("Robo Trabalhando!")
+                dados = Main_6(stop,acoes)
+                Resultado(dados)
+
+        elif SETUP == ESTRATEGIA[7]:
+            st.header("O Setup Stop Atr possui as seguintes regras;")
+            st.text("I-Se o fechamento do dia for maior do que o Stop Atr de N periodos com D desvio compra-se o fechamento do dia")
+            st.text("II-Se o fechamento do dia for menor do que o Stop Atr de N periodos com D desvio vende-se o fechamento do dia")
+            st.text("III-Caso queira pode-se incluir stop no tempo")
+            st.text("O cálculo do Stop Atr é dado por ;")
+            st.latex(r'''STOPATR = Close_1-d*Atr_n''')
+            st.text("O atr e a média de n periodo do true range ;")
+            st.latex(r'''Atr_n = \frac{\sum_{2}^{n}max\left \{ abs(High_{n-1}-Close_n,Low_{n-1}-Close_n,High_n-Low_n) \right \}}{n}''')
+            stop = st.slider("Escolha o valor do stop no tempo.Caso não deseje deixe o valor zero")
+            desvio = st.slider("Esolha o valor do desvio")
+            periodo = st.slider("Digite o valor do periodo")
+            if (periodo != 0):
+                st.write("Robo Trabalhando!")
+                dados = Main_1(stop,desvio,periodo,acoes)
+                Resultado(dados)
+                
