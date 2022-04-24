@@ -7,7 +7,6 @@ import pandas_ta as ta
 from PIL import Image
 from Backtest import Main_1,Main_2,Main_3,Main_4,Main_5,Main_6
 import requests
-import streamlit_authenticator as stauth
 
 #===========================================PROGRAMA AQUI=================================================
 #Carregando Logomarca
