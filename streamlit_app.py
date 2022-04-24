@@ -26,7 +26,7 @@ def Ativos_SP500():
     return acoes
 #Função para Carregar Ativos do SP&500
 def Ativos_B3():
-    tickers = pd.read_excel(r"C:\Users\Lucas\Documents\DADOS.xlsx")
+    tickers = pd.read_excel(r"DADOS.xlsx")
     ativos = tickers['Código'].to_list()
     acoes = []
     for ativo in ativos:
