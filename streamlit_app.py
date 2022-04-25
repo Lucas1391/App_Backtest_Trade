@@ -45,8 +45,8 @@ st.text("I-Este App realiza backtest em ações do indice Bovespa,Brasil Amplo e
 st.text("II-O Dados são obtidos pela API do yahoo finance;")
 st.text("III-Todos as operações são do tipo Swing Trade com parametros abertos;")
 st.text("IV- Os backtest são realizados para um periodo dos últimos cinco anos")
-names = ['Lucas Campos','Leandro Giron','Daniel Solano']
-passwords = ['lucassomatoria7@gmail.com','leandro.giron@gmail.com','contato@quantinvestimentos.com.br']
+names = ['Lucas Campos','Leandro Giron','Daniel Solano','Rafael Quintanilha']
+passwords = ['lucassomatoria7@gmail.com','leandro.giron@gmail.com','contato@quantinvestimentos.com.br','rafael@quantbrasil.com.br']
 usuario = st.text_input("Insira seu nome de usuário : ")
 senha = st.text_input("Insira sua senha : ")
 if senha:
