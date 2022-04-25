@@ -52,9 +52,6 @@ senha = st.text_input("Insira sua senha : ")
 if senha:
     if usuario in names and senha in passwords:
         st.text(f'Seja bem Vindo {usuario} ao App Backtest Trade!')
-    else:
-        st.write("Digite o login Novamente!")
-        
         ACOES = [" ","AÇÕES B3","AÇÕES SP&500"]
         INDICE = st.sidebar.selectbox("Escolha a classe de ações desejada :",ACOES)
         if INDICE =='AÇÕES SP&500':
@@ -173,3 +170,7 @@ if senha:
                     dados = Main_1(stop,desvio,periodo,acoes)
                     Resultado(dados)
 
+    else:
+        st.write("Digite o login Novamente!")
+        
+       
