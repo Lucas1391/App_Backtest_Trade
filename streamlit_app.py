@@ -51,7 +51,7 @@ usuario = st.text_input("Insira seu nome de usuário : ")
 senha = st.text_input("Insira sua senha : ")
 if senha:
     if usuario in names and senha in passwords:
-        st.text("Seja bem Vindo ao App Backtest Trade!")
+        st.text(f'Seja bem Vindo {usuario} ao App Backtest Trade!')
     else:
         st.write("Digite o login Novamente!")
         
