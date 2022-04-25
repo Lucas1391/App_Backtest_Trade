@@ -49,18 +49,21 @@ names = ['Lucas Campos','Leandro Giron','Daniel Solano','Rafael Quintanilha']
 passwords = ['lucassomatoria7@gmail.com','leandro.giron@gmail.com','contato@quantinvestimentos.com.br','rafael@quantbrasil.com.br']
 usuario = st.text_input("Insira seu nome de usuário : ")
 senha = st.text_input("Insira sua senha : ")
-if senha:
+while True
     if usuario in names and senha in passwords:
         st.text("Seja bem Vindo ao App Backtest Trade!")
+        break
     else:
         st.write("Digite o login Novamente!")
-
+        
     ACOES = [" ","AÇÕES B3","AÇÕES SP&500"]
     INDICE = st.sidebar.selectbox("Escolha a classe de ações desejada :",ACOES)
     if INDICE =='AÇÕES SP&500':
         acoes = Ativos_SP500()
     else:
         acoes = Ativos_B3()
+    usuario = []
+    senha
     ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR']
     SETUP = st.sidebar.selectbox('Escolha a estratégia desejado :',ESTRATEGIA)
     #Indicadores disponíveis
