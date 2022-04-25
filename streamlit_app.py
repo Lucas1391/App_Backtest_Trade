@@ -52,7 +52,6 @@ senha = st.text_input("Insira sua senha : ")
 if senha:
     if usuario in names and senha in passwords:
         st.text("Seja bem Vindo ao App Backtest Trade!")
-        break
     else:
         st.write("Digite o login Novamente!")
         
