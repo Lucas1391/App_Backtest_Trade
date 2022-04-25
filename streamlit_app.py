@@ -61,8 +61,7 @@ if senha:
         acoes = Ativos_SP500()
     else:
         acoes = Ativos_B3()
-    usuario = []
-    senha
+        
     ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR']
     SETUP = st.sidebar.selectbox('Escolha a estratégia desejado :',ESTRATEGIA)
     #Indicadores disponíveis
