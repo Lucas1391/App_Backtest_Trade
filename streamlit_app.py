@@ -47,7 +47,8 @@ st.text("III-Todos as operações são do tipo Swing Trade com parametros aberto
 st.text("IV- Os backtest são realizados para um periodo dos últimos cinco anos")
 names = ['Lucas Campos','Leandro Giron','Daniel Solano','Rafael Quintanilha','Diogo Pereira']
 passwords = ['lucassomatoria7@gmail.com','leandro.giron@gmail.com','contato@quantinvestimentos.com.br','rafael@quantbrasil.com.br','Diogo.sapia@gmail.com']
-usuario = st.text_input("Insira seu nome de usuário : ")
+#usuario = st.text_input("Insira seu nome de usuário : ")
+usuario = st.sidebar.text("Insira seu nome de usuário : ")
 senha = st.text_input("Insira sua senha : ",type='password')
 if senha:
     if usuario in names and senha in passwords:
