@@ -49,7 +49,7 @@ names = ['Lucas Campos','Leandro Giron','Daniel Solano','Rafael Quintanilha','Di
 passwords = ['lucassomatoria7@gmail.com','leandro.giron@gmail.com','contato@quantinvestimentos.com.br','rafael@quantbrasil.com.br','Diogo.sapia@gmail.com']
 #usuario = st.text_input("Insira seu nome de usuário : ")
 usuario = st.sidebar.text_input("Insira seu nome de usuário : ")
-senha = st.text_input("Insira sua senha : ",type='password')
+senha = st.sidebar.text_input("Insira sua senha : ",type='password')
 if senha:
     if usuario in names and senha in passwords:
         st.text(f'Seja bem Vindo {usuario} ao App Backtest Trade!')
