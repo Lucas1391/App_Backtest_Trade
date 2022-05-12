@@ -9,7 +9,7 @@ from Backtest import Main_1,Main_2,Main_3,Main_4,Main_5,Main_6
 import requests
 
 #===========================================PROGRAMA AQUI=================================================
-#Carregando Logomarca
+#Carregando Logomarca do APP
 #Abrindo logomarca no Streamlit
 #st.image(image,width=200)
 #Iniciando APP
