@@ -399,8 +399,8 @@ def Main_4(stop,acoes):
 #===============================================BACKTEST TUTLE 20 -10-==================================================
 def Tutle_20_10(ativo,stop):
         #Definindo ativo e o periodo de backtest
-        inicio=dt.datetime(2020,1,1)
-        fim=dt.datetime(2021,12,31)
+        inicio=datetime.datetime(2020,1,1)
+        fim=datetime.datetime(2021,12,31)
         #df = yf.download(ativo,period='5y')
         df = yf.download(ativo,inicio,fim,period="60m")
         df['data'] = df.index
