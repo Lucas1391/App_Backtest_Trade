@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime
 import yfinance as yf
 import pandas_ta as ta
-import datetime as dt
 
 #===========================================PROGRAMA AQUI=================================================
 #FUNÇÃO QUE CÁLCULA MÉTRICAS
