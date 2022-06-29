@@ -34,6 +34,11 @@ def Ativos_B3():
         ativo = ativo + ".SA"
         acoes.append(ativo)
     return acoes
+def Ativos_Forex():
+    ativos = ["AUDJPY=X","EURUSD=X","GBPUSD=X","USDCHF=X","USDCAD=X","USDCHF=X","USDCAD=X","AUDUSD=X","NZDUSD=X","EURGBP=X","EURAUD=X",
+     "GBPJPY=X","NZDJPY=X","GBPCAD","EURTRY=X","JPYNOK=X","NZDSGD","GBPZAR=X","AUDMXN=X"]
+    return ativos
+    
 def Resultado(dados):
     DataFrame = st.dataframe(dados)
     dados = dados.to_csv()
@@ -53,12 +58,14 @@ senha = st.sidebar.text_input("Insira sua senha : ",type='password')
 if senha:
     if usuario in names and senha in passwords:
         st.text(f'Seja bem Vindo {usuario} ao App Backtest Trade!')
-        ACOES = [" ","AÇÕES B3","AÇÕES SP&500"]
+        ACOES = [" ","AÇÕES B3","AÇÕES SP&500","FOREX"]
         INDICE = st.sidebar.selectbox("Escolha a classe de ações desejada :",ACOES)
         if INDICE =='AÇÕES SP&500':
             acoes = Ativos_SP500()
-        else:
+        elif INDICE =="AÇÕES SP&500":
             acoes = Ativos_B3()
+        elif INDICE == "FOREX":
+            acoes = Ativos_Forex()
 
         ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR']
         SETUP = st.sidebar.selectbox('Escolha a estratégia desejado :',ESTRATEGIA)
