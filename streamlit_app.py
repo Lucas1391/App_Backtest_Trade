@@ -59,7 +59,7 @@ if senha:
         st.text(f'Seja bem Vindo {usuario} ao App Backtest Trade!')
         ACOES = [" ","AÇÕES B3","AÇÕES SP&500","FOREX"]
         INDICE = st.sidebar.selectbox("Escolha a classe de ações desejada :",ACOES)
-        if INDICE =='AÇÕES SP&500':
+        if INDICE =='AÇÕES B3':
             acoes = Ativos_SP500()
         elif INDICE =="AÇÕES SP&500":
             acoes = Ativos_B3()
