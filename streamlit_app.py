@@ -60,9 +60,9 @@ if senha:
         ACOES = [" ","AÇÕES B3","AÇÕES SP&500","FOREX"]
         INDICE = st.sidebar.selectbox("Escolha a classe de ações desejada :",ACOES)
         if INDICE =='AÇÕES B3':
-            acoes = Ativos_SP500()
+            acoes =  Ativos_B3()
         elif INDICE =="AÇÕES SP&500":
-            acoes = Ativos_B3()
+            acoes = Ativos_SP500()
         elif INDICE == "FOREX":
             acoes = Ativos_Forex()
 
