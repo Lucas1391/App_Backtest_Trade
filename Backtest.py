@@ -148,8 +148,8 @@ def backtest_Tiktok(ativo,stop):
         #Definindo ativo e o periodo de backtest
         df = yf.download(ativo,period='5y')
         #Cálculando as métricas necessárias
-        df['Avg_Low'] = df['Low'].rolling(2).min()
-        df['Avg_High'] = df['High'].rolling(2).max()
+        df['Avg_Low'] = df['Low'].rolling(2).mean()
+        df['Avg_High'] = df['High'].rolling(2).mean()
         #Definindo função para compras 
         def podeComprar(indice, dados):
             if (dados['Low'][indice] < dados['Avg_Low'][indice-1]):
