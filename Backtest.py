@@ -651,8 +651,11 @@ def OpenTrueRange(ativo,periodo,desvio):
     Price_Buy = np.where(df['Low'] <  df['open-atr'],df['open-atr'],np.NaN)
     Price_Sell = df['Close']
     colunas = ["Price_Buy","Price_Sell",'i_Buy',"i_Sell"]
-    dados = [ Price_Buy,Price_Sell, df['data'], df['data']]
-    resultado = pd.DataFrame(dados,columns=colunas)
+    resultado = pd.DataFrame(columns = colunas)
+    resultado["Price_Buy"] = Price_Buy 
+    resultado["Price_Sell"] = Price_Sell
+    resultado['i_Buy'] = df['data']
+    resultado['i_Sell'] = df['data']
     return resultado
 #==========================================================FUNÇÃO EXECUTA BACKTEST EM VÁRIOS ATIVOS====================================
 def Main_8(desvio,periodo,acoes):
@@ -674,8 +677,11 @@ def Gambit(ativo,periodo,desvio):
     Price_Buy = np.where(df['Low'] < df['lowest- Queda'],df['lowest- Queda'],np.NaN)
     Price_Sell = df['Close']
     colunas = ["Price_Buy","Price_Sell",'i_Buy',"i_Sell"]
-    dados = [ Price_Buy,Price_Sell, df['data'], df['data']]
-    resultado = pd.DataFrame(dados,columns=colunas)
+    resultado = pd.DataFrame(columns = colunas)
+    resultado["Price_Buy"] = Price_Buy 
+    resultado["Price_Sell"] = Price_Sell
+    resultado['i_Buy'] = df['data']
+    resultado['i_Sell'] = df['data'] 
     return resultado
 #======================================================FUNÇÃO EXECUTA EM VÁRIOS ATIVOS====================================================
 def Main_9(desvio,periodo,acoes):
