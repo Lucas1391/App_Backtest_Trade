@@ -669,6 +669,7 @@ def Gambit(ativo,periodo,desvio):
     df['data'] = df.index
     df['lowest'] = df['low'].rolling(periodo).min()
     df['lowest'] = df['lowest'].shift(1)
+    desvio = 1 - desvio
     df['lowest- Queda'] = df['lowest']*desvio   
     Price_Buy = np.where(df['Low'] < df['lowest- Queda'],df['lowest- Queda'],np.NaN)
     Price_Sell = df['Close']
