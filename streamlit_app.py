@@ -66,7 +66,7 @@ if senha:
         elif INDICE == "FOREX":
             acoes = Ativos_Forex()
 
-        ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR','OPENTRUERANGE(DAY TRADE)']
+        ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR','OPENTRUERANGE(DAY TRADE)','GAMBIT(DAY TRADE)']
         SETUP = st.sidebar.selectbox('Escolha a estratégia desejado :',ESTRATEGIA)
         #Indicadores disponíveis
         if SETUP:
@@ -191,6 +191,21 @@ if senha:
                     st.write("Robo Trabalhando!")
                     dados = Main_8(stop,desvio,periodo,acoes)
                     Resultado(dados)
+            elif SETUP == ESTRATEGIA[9]:
+                st.header("O Setup Gambit possui as seguintes regras;")
+                st.text("I-Se o Preço do dia for menor do que o indicador Gambit com um periodo e desvio compra-se o a mercado")
+                st.text("II-Saída acontece no final do pregão")
+                st.text("III-A estrategia não possui stop.Caso deseje insira um stop de segurança percentual")
+                st.text("O cálculo do Gambit é dado por ;")
+                st.latex(r'''Gambit = d*Avg_Low_n''')
+                st.text("O valor de d representa o desvio em relação a média ;")
+                desvio = st.slider("Esolha o valor do desvio")
+                periodo = st.slider("Digite o valor do periodo")
+                if (periodo != 0):
+                    st.write("Robo Trabalhando!")
+                    dados = Main_8(stop,desvio,periodo,acoes)
+                    Resultado(dados)
+            
                 
 
     else:
