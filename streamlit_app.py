@@ -5,7 +5,7 @@ import pandas as pd
 import yfinance as yf
 import pandas_ta as ta
 from PIL import Image
-from Backtest import Main_1,Main_2,Main_3,Main_4,Main_5,Main_6
+from Backtest import Main_1,Main_2,Main_3,Main_4,Main_5,Main_6,Main_7
 import requests
 
 #===========================================PROGRAMA AQUI=================================================
@@ -66,7 +66,7 @@ if senha:
         elif INDICE == "FOREX":
             acoes = Ativos_Forex()
 
-        ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR']
+        ESTRATEGIA = ['','BANDAS DE BOLLINGER','TIKTOK','IFR2','3MAX3MIN','TUTLE 20-10','MÉDIA 9.1','STOP ATR','OPENTRUERANGE(DAY TRADE)']
         SETUP = st.sidebar.selectbox('Escolha a estratégia desejado :',ESTRATEGIA)
         #Indicadores disponíveis
         if SETUP:
@@ -174,8 +174,24 @@ if senha:
                 periodo = st.slider("Digite o valor do periodo")
                 if (periodo != 0):
                     st.write("Robo Trabalhando!")
-                    dados = Main_1(stop,desvio,periodo,acoes)
+                    dados = Main_7(stop,desvio,periodo,acoes)
                     Resultado(dados)
+            elif SETUP == ESTRATEGIA[8]:
+                st.header("O Setup Open True Range possui as seguintes regras;")
+                st.text("I-Se o Preço do dia for menor do que o indicador OpenTrueRange com um periodo e desvio compra-se o a mercado")
+                st.text("II-Saída acontece no final do pregão")
+                st.text("III-A estrategia não possui stop.Caso deseje insira um stop de segurança percentual")
+                st.text("O cálculo do OpenTrueRange  é dado por ;")
+                st.latex(r'''OpenTrueRange = Open-d*Atr_n''')
+                st.text("O atr e a média de n periodo do true range ;")
+                st.latex(r'''Atr_n = \frac{\sum_{2}^{n}max\left \{ abs(High_{n-1}-Close_n,Low_{n-1}-Close_n,High_n-Low_n) \right \}}{n}''')
+                desvio = st.slider("Esolha o valor do desvio")
+                periodo = st.slider("Digite o valor do periodo")
+                if (periodo != 0):
+                    st.write("Robo Trabalhando!")
+                    dados = Main_8(stop,desvio,periodo,acoes)
+                    Resultado(dados)
+                
 
     else:
         st.write("Digite o login Novamente!")
