@@ -655,11 +655,33 @@ def OpenTrueRange(ativo,periodo,desvio):
     resultado = pd.DataFrame(dados,columns=colunas)
     return resultado
 #==========================================================FUNÇÃO EXECUTA BACKTEST EM VÁRIOS ATIVOS====================================
-def Main_8(stop,desvio,periodo,acoes):
+def Main_8(desvio,periodo,acoes):
     result_ativos = {}  
     for acao in acoes:
         print(acao)
         result_ativos.update({acao:OpenTrueRange(ativo,periodo,desvio)})
     Trades = pd.DataFrame(result_ativos.values())
     return Trades
-        
+#=====================================================Gambit============================================================================
+def Gambit(ativo,periodo,desvio):
+    #dados
+    df = yf.download(ativo,period='5y')
+    df['data'] = df.index
+    df['lowest'] = df['low'].rolling(periodo).min()
+    df['lowest'] = df['lowest'].shift(1)
+    df['lowest- Queda'] = df['lowest']*desvio   
+    Price_Buy = np.where(df['Low'] < df['lowest- Queda'],df['lowest- Queda'],np.NaN)
+    Price_Sell = df['Close']
+    colunas = ["Price_Buy","Price_Sell",'i_Buy',"i_Sell"]
+    dados = [ Price_Buy,Price_Sell, df['data'], df['data']]
+    resultado = pd.DataFrame(dados,columns=colunas)
+    return resultado
+#======================================================FUNÇÃO EXECUTA EM VÁRIOS ATIVOS====================================================
+def Main_9(desvio,periodo,acoes):
+    result_ativos = {}  
+    for acao in acoes:
+        print(acao)
+        result_ativos.update({acao:Gambit(ativo,periodo,desvio)})
+    Trades = pd.DataFrame(result_ativos.values())
+    return Trades
+
