@@ -189,7 +189,7 @@ if senha:
                 periodo = st.slider("Digite o valor do periodo")
                 if (periodo != 0):
                     st.write("Robo Trabalhando!")
-                    dados = Main_8(stop,desvio,periodo,acoes)
+                    dados = Main_8(desvio,periodo,acoes)
                     Resultado(dados)
             elif SETUP == ESTRATEGIA[9]:
                 st.header("O Setup Gambit possui as seguintes regras;")
@@ -203,7 +203,7 @@ if senha:
                 periodo = st.slider("Digite o valor do periodo")
                 if (periodo != 0):
                     st.write("Robo Trabalhando!")
-                    dados = Main_8(stop,desvio,periodo,acoes)
+                    dados = Main_9(desvio,periodo,acoes)
                     Resultado(dados)
             
                 
