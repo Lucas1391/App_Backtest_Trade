@@ -638,8 +638,9 @@ def Main_7(stop,acoes,periodo,desvio):
 #======================================================Open True Range==============================================================
 def OpenTrueRange(ativo,periodo,desvio):
     #dados
+  def OpenTrueRange(ativo,periodo,desvio):
+    #dados
     df = yf.download(ativo,period='5y')
-    df['data'] = df.index
     #Cálculo do indicador Open-Atr
     high_low = df['High'] - df['Low']
     high_close = np.abs(df['High'] - df['Close'].shift())
@@ -648,15 +649,12 @@ def OpenTrueRange(ativo,periodo,desvio):
     true_range = np.max(ranges, axis=1)
     df['atr'] = (true_range.rolling(periodo).sum())/periodo
     df['open-atr'] = df['Open'] -desvio*df['atr']
-    Price_Buy = np.where(df['Low'] <  df['open-atr'],df['open-atr'],np.NaN)
-    Price_Sell = df['Close']
-    colunas = ["Price_Buy","Price_Sell",'i_Buy',"i_Sell"]
-    resultado = pd.DataFrame(columns = colunas)
-    resultado["Price_Buy"] = Price_Buy 
-    resultado["Price_Sell"] = Price_Sell
-    resultado['i_Buy'] = df['data']
-    resultado['i_Sell'] = df['data']
-    return resultado
+    df['Price_Buy'] = np.where(df['Low'] <  df['open-atr'],df['open-atr'],np.NaN)
+    df['Price_Sell'] = df['Close']
+    df['i_Buy'] =  df.index
+    df['i_Sell'] =  df.index
+    return df
+
 #==========================================================FUNÇÃO EXECUTA BACKTEST EM VÁRIOS ATIVOS====================================
 def Main_8(desvio,periodo,acoes):
     result_ativos = {}  
